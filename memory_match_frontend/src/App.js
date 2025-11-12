@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+// Note: This file contains the original integrated game component.
+// The application now uses AppRouter as the entry point with pages for Login, SelectMode, and GamePage.
+// GamePage reproduces this logic and reads username/difficulty from context.
 import './index.css';
 import './App.css';
 import StatusBar from './components/StatusBar';
