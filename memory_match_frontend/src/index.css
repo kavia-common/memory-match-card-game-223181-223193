@@ -1,9 +1,9 @@
 :root {
   /* PUBLIC_INTERFACE
      Global card sizing tokens.
-     Cards are locked to exactly 25px square across the app.
+     Cards are locked to exactly 35px square across the app.
   */
-  --card-size: 25px;
+  --card-size: 35px;
 
   /* Backward compatibility (Card.module.css references --mm-card-size) */
   --mm-card-size: var(--card-size);

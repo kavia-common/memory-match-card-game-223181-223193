@@ -1,14 +1,14 @@
 :root {
   /* PUBLIC_INTERFACE
      --mm-card-size mirrors :root --card-size for backward compatibility.
-     Cards are locked to exactly 25px via --card-size in index.css. */
+     Cards are locked to exactly 35px via --card-size in index.css. */
   --mm-card-size: var(--card-size);
   --mm-card-radius: 6px; /* reduced rounding to fit small size gracefully */
   --mm-card-radius-focus: 8px;
 
-  /* Font sizes tuned for 25px cards */
-  --mm-card-font-min: 9px;
-  --mm-card-font-max: 13px;
+  /* Font sizes tuned for 35px cards */
+  --mm-card-font-min: 10px;
+  --mm-card-font-max: 16px;
 }
 
 .cardButton {
@@ -16,7 +16,7 @@
   -webkit-appearance: none;
   background: transparent;
   border: none;
-  padding: 0;
+  padding: 0; /* ensure final box stays 35px */
   width: var(--card-size);
   height: var(--card-size);
   box-sizing: border-box;
@@ -25,7 +25,7 @@
   perspective: 900px;
   border-radius: var(--mm-card-radius);
   outline: none;
-  /* No min/max to avoid exceeding 25px */
+  /* No min/max to avoid exceeding 35px */
 }
 
 .cardButton:focus-visible {
@@ -92,6 +92,7 @@
 
 .cardBack {
   background: var(--card-back, #fde2f1); /* pink theme */
+  /* No extra padding/margins; border contained via border-box */
 }
 
 /* Flip states */
@@ -106,8 +107,8 @@
 
 /* Font sizes scale with card size but are capped for readability */
 .cardFace {
-  /* Tuned for fixed 25px cards: safe, legible, no overflow */
-  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.38), var(--mm-card-font-max));
+  /* Tuned for fixed 35px cards: safe, legible, no overflow */
+  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.46), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
   line-height: 1;
@@ -121,7 +122,7 @@
 }
 
 .backAccent {
-  font-size: clamp(calc(var(--mm-card-font-min) - 1px), calc(var(--mm-card-size) * 0.3), calc(var(--mm-card-font-max) - 1px));
+  font-size: clamp(calc(var(--mm-card-font-min) - 1px), calc(var(--mm-card-size) * 0.36), calc(var(--mm-card-font-max) - 1px));
   color: rgba(244, 114, 182, 0.9);
 }
 

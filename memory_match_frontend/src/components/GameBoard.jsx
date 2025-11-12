@@ -27,7 +27,7 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
 
   // Fixed card size for all difficulties (both 4x4 and 6x6 use the same size)
   // PUBLIC_INTERFACE
-  // No overrides here; size is controlled globally via :root --card-size (25px).
+  // No overrides here; size is controlled globally via :root --card-size (35px).
   const cardSizeVar = useMemo(() => {
     return {
       '--mm-card-size': 'var(--card-size)',
