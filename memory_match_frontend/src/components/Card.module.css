@@ -40,7 +40,8 @@
 }
 
 .cardButton:focus-visible {
-  box-shadow: 0 0 0 3px rgba(244,114,182,0.6);
+  /* Harmonize focus with green primary */
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.6);
   border-radius: var(--mm-card-radius-focus);
 }
 
@@ -78,7 +79,7 @@
 }
 
 .cardBack {
-  background: var(--card-back, #fde2f1);
+  background: var(--card-back, #e9fbf4);
 }
 
 .card.flipped {
@@ -105,5 +106,5 @@
 
 .backAccent {
   font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.28 * var(--mm-card-scale)), calc(var(--mm-card-font-max) - 2px));
-  color: rgba(244, 114, 182, 0.9);
+  color: rgba(16, 185, 129, 0.9);
 }
