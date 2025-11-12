@@ -1,0 +1,80 @@
+.cardButton {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  position: relative;
+  perspective: 800px;
+  border-radius: 14px;
+  outline: none;
+}
+
+.cardButton:focus-visible {
+  box-shadow: 0 0 0 3px rgba(244,114,182,0.6);
+  border-radius: 16px;
+}
+
+.cardButton:disabled {
+  cursor: default;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 360ms ease;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
+}
+
+.cardFront,
+.cardBack {
+  background: var(--card-surface, #fff);
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--card-border, #f1e4ee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardFront {
+  transform: rotateY(180deg);
+  background: var(--card-front, #fff);
+}
+
+.cardBack {
+  background: var(--card-back, #fde2f1);
+}
+
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card.matched {
+  transform: rotateY(180deg);
+  box-shadow: 0 12px 24px rgba(16,185,129,0.18), 0 4px 8px rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.3);
+}
+
+.cardFace {
+  font-size: clamp(20px, 5vw, 36px);
+  color: var(--card-text, #374151);
+  user-select: none;
+}
+
+.faceText {
+  transform: translateZ(1px);
+}
+
+.backAccent {
+  font-size: clamp(18px, 4vw, 28px);
+  color: rgba(244, 114, 182, 0.9);
+}
