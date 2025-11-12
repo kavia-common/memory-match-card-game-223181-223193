@@ -66,7 +66,7 @@ export default function WinModal({ open, time, moves, onPlayAgain, difficulty })
           Congratulations!
         </div>
         <p style={{ marginTop: 0, color: theme.textMuted }}>
-          You completed the Ocean Memory Match{difficulty ? ` on ${difficulty}` : ''}.
+          You completed the Memory Match{difficulty ? ` on ${difficulty}` : ''}.
         </p>
 
         <div

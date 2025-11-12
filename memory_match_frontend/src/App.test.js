@@ -3,6 +3,6 @@ import App from './App';
 
 test('renders status bar title', () => {
   render(<App />);
-  const title = screen.getByText(/Ocean Memory Match/i);
+  const title = screen.getByText(/Memory Match/i);
   expect(title).toBeInTheDocument();
 });

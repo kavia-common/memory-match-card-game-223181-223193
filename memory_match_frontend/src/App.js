@@ -221,7 +221,7 @@ function App() {
         }}
       >
         <StatusBar
-          title="Ocean Memory Match"
+          title="Memory Match"
           time={timeFormatted}
           moves={moves}
           onRestart={handleRestart}

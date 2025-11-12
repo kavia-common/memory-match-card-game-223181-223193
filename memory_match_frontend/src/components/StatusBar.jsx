@@ -43,7 +43,7 @@ export default function StatusBar({
             fontWeight: 700,
             letterSpacing: 0.2,
           }}
-          aria-label={`${title}${difficulty ? `, difficulty ${difficulty}` : ''}`}
+          aria-label={`Memory Match${difficulty ? `, difficulty ${difficulty}` : ''}`}
         >
           {title}
         </h1>
