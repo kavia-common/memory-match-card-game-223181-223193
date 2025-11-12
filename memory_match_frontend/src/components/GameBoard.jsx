@@ -20,26 +20,14 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
   const gridTemplateColumns = useMemo(() => `repeat(${cols}, minmax(0, 1fr))`, [cols]);
 
   // PUBLIC_INTERFACE
-  // Fixed card size (35px) referenced via root variable; expose board-level CSS variables for gap/padding.
+  // Card size is defined globally via CSS variables; only expose grid gap/padding variables here.
   const boardVars = useMemo(() => {
-    // Provide inline fallbacks in case classNames aren't used; these mirror :root defaults.
-    const base = {
+    return {
       '--mm-card-size': 'var(--card-size)',
       '--grid-gap': 'var(--grid-gap, 10px)',
       '--board-padding': 'var(--board-padding, 12px)',
     };
-
-    // Optional per-difficulty tuning using inline CSS variables; classNames also handle this via CSS.
-    if (difficulty === '6x6') {
-      base['--grid-gap'] = '8px';
-      base['--board-padding'] = '12px';
-    } else if (difficulty === '4x4') {
-      base['--grid-gap'] = '12px';
-      base['--board-padding'] = '14px';
-    }
-
-    return base;
-  }, [difficulty]);
+  }, []);
 
   // Reduced motion detection
   const prefersReducedMotion = typeof window !== 'undefined' &&

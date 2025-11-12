@@ -1,15 +1,16 @@
 :root {
   /* PUBLIC_INTERFACE
      Global card sizing tokens.
-     Cards are locked to exactly 35px square across the app.
+     The inner content box is exactly 50px square. The outer wrapper fits it precisely.
   */
-  --card-size: 35px;
+  --card-inner-size: 50px;
+  --card-size: var(--card-inner-size);
 
   /* Backward compatibility (Card.module.css references --mm-card-size) */
   --mm-card-size: var(--card-size);
 
   /* Grid layout tokens
-     --grid-gap: spacing between cards; tuned for 35px cards.
+     --grid-gap: spacing between cards; tuned for compact 50px cards.
      --board-padding: inner padding around the board to prevent focus ring clipping.
      Difficulty-specific overrides (via class on board) can adjust these.
   */

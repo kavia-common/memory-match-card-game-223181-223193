@@ -1,41 +1,43 @@
 :root {
   /* PUBLIC_INTERFACE
      --mm-card-size mirrors :root --card-size for backward compatibility.
-     Cards are locked to exactly 35px via --card-size in index.css. */
+     Inner card box is exactly 50px via --card-inner-size in index.css. */
   --mm-card-size: var(--card-size);
   --mm-card-radius: 6px; /* reduced rounding to fit small size gracefully */
   --mm-card-radius-focus: 8px;
 
-  /* Font sizes tuned for 35px cards */
-  --mm-card-font-min: 10px;
-  --mm-card-font-max: 16px;
+  /* Font sizes tuned for 50px cards */
+  --mm-card-font-min: 11px;
+  --mm-card-font-max: 18px;
 }
 
+/* Outer clickable wrapper - must fit the inner box exactly */
 .cardButton {
   appearance: none;
   -webkit-appearance: none;
   background: transparent;
-  border: none;
-  padding: 0; /* ensure final box stays 35px */
-  width: var(--card-size);
+  border: none;            /* avoid adding to total size */
+  padding: 0;              /* avoid adding to total size */
+  width: var(--card-size); /* equals --card-inner-size */
   height: var(--card-size);
-  box-sizing: border-box;
+  box-sizing: border-box;  /* ensure future borders won't inflate */
   cursor: pointer;
   position: relative;
-  perspective: 900px;
+  perspective: 900px;      /* 3D flip */
   border-radius: var(--mm-card-radius);
   outline: none;
-  /* No min/max to avoid exceeding 35px */
 }
 
+/* Focus ring handled on inner .card so outer size remains unchanged */
 .cardButton:focus-visible {
-  /* Focus ring handled on inner card to respect rounded corners */
+  /* no outline to prevent layout shifts */
 }
 
 .cardButton:disabled {
   cursor: default;
 }
 
+/* Inner 3D flipping element sized to the same box */
 .card {
   width: 100%;
   height: 100%;
@@ -46,6 +48,7 @@
   border-radius: var(--mm-card-radius);
   box-shadow: 0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
   will-change: transform;
+  overflow: hidden; /* prevent focus ring/inner content from spilling */
 }
 
 /* Hover/active elevation micro-interactions (mouse/pen only) */
@@ -60,23 +63,23 @@
   }
 }
 
-/* Custom focus-visible ring with offset and rounding */
+/* Custom focus-visible ring drawn inside the available space */
 .cardButton:focus-visible .card {
-  /* Focus ring is drawn on the inner .card so it doesn't increase the outer button box,
-     preventing clipping by grid gaps; board padding ensures visual comfort. */
   box-shadow:
-    0 0 0 var(--focus-offset, 2px) #fff,
-    0 0 0 calc(var(--focus-width, 3px) + var(--focus-offset, 2px)) var(--focus-color, rgba(244,114,182,0.8)),
+    0 0 0 var(--focus-offset, 2px) #fff inset,
+    0 0 0 calc(var(--focus-width, 3px) + var(--focus-offset, 2px)) var(--focus-color, rgba(244,114,182,0.8)) inset,
     0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
   border-radius: var(--mm-card-radius-focus);
 }
 
-/* Both faces */
+/* Both faces occupy the inner 50px exactly */
 .cardFront,
 .cardBack {
-  background: var(--card-surface, #fff);
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 0;
+  width: var(--mm-card-size);   /* equals 50px */
+  height: var(--mm-card-size);  /* equals 50px */
   backface-visibility: hidden;
   border-radius: var(--mm-card-radius);
   border: 1px solid var(--card-border, #f1e4ee);
@@ -84,7 +87,9 @@
   align-items: center;
   justify-content: center;
   will-change: transform, opacity;
-  box-sizing: border-box; /* Prevent border from inflating size */
+  box-sizing: border-box; /* borders stay inside the fixed box */
+  background: var(--card-surface, #fff);
+  overflow: hidden;
 }
 
 .cardFront {
@@ -93,8 +98,7 @@
 }
 
 .cardBack {
-  background: var(--card-back, #fde2f1); /* pink theme */
-  /* No extra padding/margins; border contained via border-box */
+  background: var(--card-back, #fde2f1);
 }
 
 /* Flip states */
@@ -104,12 +108,11 @@
 .card.matched {
   transform: rotateY(180deg) translateZ(0);
   box-shadow: 0 12px 24px rgba(16,185,129,0.18), 0 4px 8px rgba(16,185,129,0.12);
-  border: 1px solid rgba(16,185,129,0.3); /* contained via border-box */
+  /* border remains contained by border-box on faces; no outer border added */
 }
 
-/* Font sizes scale with card size but are capped for readability */
+/* Face content - clamp for readability at 50px */
 .cardFace {
-  /* Tuned for fixed 35px cards: safe, legible, no overflow */
   font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.46), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
