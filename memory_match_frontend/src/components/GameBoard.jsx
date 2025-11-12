@@ -56,7 +56,11 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
     boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.6)',
     maxWidth: '100%',
     width: '100%',
-    margin: '0 auto',
+    // Center the board horizontally only; preserve existing top spacing by not adding vertical centering.
+    display: 'flex',
+    justifyContent: 'center',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     overflowX: 'hidden',
   };
 
@@ -98,6 +102,7 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
           display: 'grid',
           gridTemplateColumns,
           gap,
+          // Keep the grid's intrinsic width to maintain card sizes; let the outer flex wrapper center it.
           width: innerGridWidth,
           maxWidth: '100%',
         }}
