@@ -1,9 +1,9 @@
 :root {
   /* PUBLIC_INTERFACE
      Global card sizing tokens.
-     The inner content box is exactly 60px square. The outer wrapper fits it precisely.
+     The inner content box is exactly 100px square. The outer wrapper fits it precisely.
   */
-  --card-inner-size: 60px;
+  --card-inner-size: 100px;
   --card-size: var(--card-inner-size);
 
   /* Backward compatibility (Card.module.css references --mm-card-size) */
@@ -14,8 +14,8 @@
      --board-padding: inner padding around the board to prevent focus ring clipping.
      Difficulty-specific overrides (via class on board) can adjust these.
   */
-  --grid-gap: 10px;        /* sensible default for medium densities */
-  --board-padding: 12px;   /* keep enough room for focus ring and border radius */
+  --grid-gap: 10px;        /* sensible default; unchanged per instruction */
+  --board-padding: 12px;   /* unchanged per instruction */
 
   /* Motion tokens */
   --easing-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
