@@ -16,36 +16,53 @@ import theme from '../styles/theme';
 export default function GameBoard({ cols, rows, cards, onFlip, theme: passedTheme, difficulty }) {
   const t = passedTheme || theme;
 
-  // Grid gap tuning: smaller for dense grids (6x6), slightly larger for 4x4 for readability
-  const gap = useMemo(() => {
-    if (cols >= 6 || rows >= 6) return 8; // slightly increased for readability balance
-    return 12; // roomier on 4x4
-  }, [cols, rows]);
-
   // Equal-width columns; card size is driven by CSS variables
   const gridTemplateColumns = useMemo(() => `repeat(${cols}, minmax(0, 1fr))`, [cols]);
 
-  // Fixed card size for all difficulties (both 4x4 and 6x6 use the same size)
   // PUBLIC_INTERFACE
-  // No overrides here; size is controlled globally via :root --card-size (35px).
-  const cardSizeVar = useMemo(() => {
-    return {
+  // Fixed card size (35px) referenced via root variable; expose board-level CSS variables for gap/padding.
+  const boardVars = useMemo(() => {
+    // Provide inline fallbacks in case classNames aren't used; these mirror :root defaults.
+    const base = {
       '--mm-card-size': 'var(--card-size)',
+      '--grid-gap': 'var(--grid-gap, 10px)',
+      '--board-padding': 'var(--board-padding, 12px)',
     };
-  }, []);
 
+    // Optional per-difficulty tuning using inline CSS variables; classNames also handle this via CSS.
+    if (difficulty === '6x6') {
+      base['--grid-gap'] = '8px';
+      base['--board-padding'] = '12px';
+    } else if (difficulty === '4x4') {
+      base['--grid-gap'] = '12px';
+      base['--board-padding'] = '14px';
+    }
+
+    return base;
+  }, [difficulty]);
+
+  // Reduced motion detection
   const prefersReducedMotion = typeof window !== 'undefined' &&
     window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Difficulty class to enable CSS-based overrides
+  const difficultyClass =
+    difficulty === '6x6'
+      ? 'board--hard'
+      : difficulty === '4x4'
+      ? 'board--easy'
+      : '';
+
   return (
     <section
       aria-label={`Game board ${cols} by ${rows}${difficulty ? `, difficulty ${difficulty}` : ''}`}
+      className={difficultyClass}
       style={{
         display: 'grid',
         gridTemplateColumns,
-        gap,
-        padding: 12,
+        gap: 'var(--grid-gap)',
+        padding: 'var(--board-padding)',
         background: t.boardBg,
         borderRadius: 14,
         border: `1px solid ${t.surfaceBorder}`,
@@ -53,7 +70,9 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
         maxWidth: '100%',
         width: '100%',
         margin: '0 auto',
-        ...cardSizeVar,
+        // Ensure outlines are not clipped by adding minimal extra space if custom focus ring grows
+        // Note: main padding is already generous; additional safe-area can be added via CSS vars if needed.
+        ...boardVars,
       }}
     >
       {cards.map((card, idx) => {

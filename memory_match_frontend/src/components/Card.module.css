@@ -62,6 +62,8 @@
 
 /* Custom focus-visible ring with offset and rounding */
 .cardButton:focus-visible .card {
+  /* Focus ring is drawn on the inner .card so it doesn't increase the outer button box,
+     preventing clipping by grid gaps; board padding ensures visual comfort. */
   box-shadow:
     0 0 0 var(--focus-offset, 2px) #fff,
     0 0 0 calc(var(--focus-width, 3px) + var(--focus-offset, 2px)) var(--focus-color, rgba(244,114,182,0.8)),

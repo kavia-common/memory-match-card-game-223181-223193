@@ -8,6 +8,14 @@
   /* Backward compatibility (Card.module.css references --mm-card-size) */
   --mm-card-size: var(--card-size);
 
+  /* Grid layout tokens
+     --grid-gap: spacing between cards; tuned for 35px cards.
+     --board-padding: inner padding around the board to prevent focus ring clipping.
+     Difficulty-specific overrides (via class on board) can adjust these.
+  */
+  --grid-gap: 10px;        /* sensible default for medium densities */
+  --board-padding: 12px;   /* keep enough room for focus ring and border radius */
+
   /* Motion tokens */
   --easing-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
   --easing-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -23,6 +31,18 @@
   /* Status gradient helpers */
   --status-grad-start: #FFF1F2; /* rose-50 */
   --status-grad-end: #FAF5FF;   /* purple-50 */
+}
+
+/* Difficulty modifiers (optional). Apply one of these classes to the board root.
+   4x4 benefits from slightly larger gaps; 6x6 should be tighter but leave room for focus ring.
+*/
+.board--easy {
+  --grid-gap: 12px;
+  --board-padding: 14px;
+}
+.board--hard {
+  --grid-gap: 8px;
+  --board-padding: 12px;
 }
 
 /* Prefer-reduced-motion keeps tokens but does not change card size */
