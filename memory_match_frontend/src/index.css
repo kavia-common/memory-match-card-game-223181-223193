@@ -1,12 +1,9 @@
 :root {
   /* PUBLIC_INTERFACE
      Global card sizing tokens.
-     QUICK TWEAK: Adjust only --card-size (default) to change size app-wide.
-     The final computed size is clamp(--card-size, --card-size-min, --card-size-max).
+     Cards are locked to exactly 25px square across the app.
   */
-  --card-size-min: 20px;
-  --card-size-max: 25px;
-  --card-size: 22px; /* <- Quick tweak point */
+  --card-size: 25px;
 
   /* Backward compatibility (Card.module.css references --mm-card-size) */
   --mm-card-size: var(--card-size);

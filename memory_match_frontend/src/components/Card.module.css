@@ -1,12 +1,12 @@
 :root {
   /* PUBLIC_INTERFACE
      --mm-card-size mirrors :root --card-size for backward compatibility.
-     Adjust --card-size in index.css to tune sizes app-wide. */
+     Cards are locked to exactly 25px via --card-size in index.css. */
   --mm-card-size: var(--card-size);
   --mm-card-radius: 6px; /* reduced rounding to fit small size gracefully */
   --mm-card-radius-focus: 8px;
 
-  /* Font clamps tailored for 20–25px cards for legibility without overflow */
+  /* Font sizes tuned for 25px cards */
   --mm-card-font-min: 9px;
   --mm-card-font-max: 13px;
 }
@@ -17,18 +17,15 @@
   background: transparent;
   border: none;
   padding: 0;
-  width: clamp(var(--card-size), var(--card-size-min), var(--card-size-max));
-  height: clamp(var(--card-size), var(--card-size-min), var(--card-size-max));
+  width: var(--card-size);
+  height: var(--card-size);
   box-sizing: border-box;
   cursor: pointer;
   position: relative;
   perspective: 900px;
   border-radius: var(--mm-card-radius);
   outline: none;
-  /* Ensure minimums are not above 20px */
-  min-width: var(--card-size-min);
-  min-height: var(--card-size-min);
-  /* Elevation on hover/press via transform on inner .card to keep layout stable */
+  /* No min/max to avoid exceeding 25px */
 }
 
 .cardButton:focus-visible {
@@ -104,12 +101,12 @@
 .card.matched {
   transform: rotateY(180deg) translateZ(0);
   box-shadow: 0 12px 24px rgba(16,185,129,0.18), 0 4px 8px rgba(16,185,129,0.12);
-  border: 1px solid rgba(16,185,129,0.3);
+  border: 1px solid rgba(16,185,129,0.3); /* contained via border-box */
 }
 
 /* Font sizes scale with card size but are capped for readability */
 .cardFace {
-  /* For 20–25px cards, keep within 9–13px and use ~0.38x as center */
+  /* Tuned for fixed 25px cards: safe, legible, no overflow */
   font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.38), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
