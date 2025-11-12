@@ -66,6 +66,8 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
       {cards.map((card, idx) => {
         const delay = prefersReducedMotion ? '0ms' : `${Math.min(idx * 30, 240)}ms`;
         const entranceClass = 'cardEntrance';
+        // Note: The entranceClass only animates opacity in CSS to avoid breaking 3D perspective.
+        // Do not apply transforms on this wrapper, as it sits above the perspective context (.cardButton).
         return (
           <div
             key={card.id}
