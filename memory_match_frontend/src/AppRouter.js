@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { AppProvider, AppContext } from './context/AppContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Login from './pages/Login';
+import ThemeSelect from './pages/ThemeSelect';
 import SelectMode from './pages/SelectMode';
 import GamePage from './pages/GamePage';
 
@@ -20,22 +22,25 @@ function RequireUsername() {
 
 /**
  * PUBLIC_INTERFACE
- * AppRouter wires up routes for login, selection, and game.
+ * AppRouter wires up routes for login, theme selection, mode selection, and game.
  */
 export default function AppRouter() {
   return (
     <AppProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route element={<RequireUsername />}>
-            <Route path="/select" element={<SelectMode />} />
-            <Route path="/game" element={<GamePage />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route element={<RequireUsername />}>
+              <Route path="/theme" element={<ThemeSelect />} />
+              <Route path="/select" element={<SelectMode />} />
+              <Route path="/game" element={<GamePage />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
     </AppProvider>
   );
 }

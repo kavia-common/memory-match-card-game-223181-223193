@@ -1,17 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { AppContext } from '../context/AppContext';
 import theme from '../styles/theme';
+import { AppContext } from '../context/AppContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 /**
  * PUBLIC_INTERFACE
- * SelectMode page: lets a logged-in user pick a game difficulty (4x4 or 6x6).
- * Navigates to /game after selection.
+ * ThemeSelect page: shown after login to select card theme.
+ * Options: Fish (default), Fruits, Flower.
+ * Fruits and Flower mirror Fish layout/behavior/styles (only labels/assets differ).
  */
-export default function SelectMode() {
-  const { username, difficulty, setDifficulty } = useContext(AppContext);
+export default function ThemeSelect() {
+  const { username } = useContext(AppContext);
+  const { themeKey, setThemeKey } = useContext(ThemeContext);
+  const [choice, setChoice] = useState(themeKey || 'fish');
   const navigate = useNavigate();
-  const [choice, setChoice] = useState(difficulty || '4x4');
 
   useEffect(() => {
     if (!username) {
@@ -20,18 +23,19 @@ export default function SelectMode() {
   }, [username, navigate]);
 
   const onContinue = () => {
-    setDifficulty(choice);
-    navigate('/game');
+    setThemeKey(choice || 'fish');
+    // After theme, go to mode selection
+    navigate('/select');
   };
 
-  const ModeCard = ({ label, description }) => {
-    const selected = choice === label;
+  const OptionCard = ({ value, title, subtitle, icon }) => {
+    const selected = choice === value;
     return (
       <button
         type="button"
-        onClick={() => setChoice(label)}
+        onClick={() => setChoice(value)}
         aria-pressed={selected}
-        aria-label={`${label} mode ${selected ? 'selected' : ''}`}
+        aria-label={`${title} theme ${selected ? 'selected' : ''}`}
         style={{
           textAlign: 'left',
           width: '100%',
@@ -59,11 +63,11 @@ export default function SelectMode() {
             }}
             aria-hidden="true"
           >
-            {label === '4x4' ? 'E' : 'H'}
+            {icon}
           </span>
           <div>
-            <div style={{ fontWeight: 800, color: theme.text }}>{label}</div>
-            <div style={{ color: theme.textMuted, fontSize: 13 }}>{description}</div>
+            <div style={{ fontWeight: 800, color: theme.text }}>{title}</div>
+            <div style={{ color: theme.textMuted, fontSize: 13 }}>{subtitle}</div>
           </div>
         </div>
       </button>
@@ -84,7 +88,7 @@ export default function SelectMode() {
     >
       <main
         role="main"
-        aria-label="Select game mode"
+        aria-label="Select theme"
         style={{
           width: '100%',
           maxWidth: 720,
@@ -96,24 +100,27 @@ export default function SelectMode() {
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>Choose your mode</h1>
-          <div style={{ color: theme.textMuted, fontSize: 14 }}>Player: <strong style={{ color: theme.text }}>{username}</strong></div>
+          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800 }}>Choose your theme</h1>
+          <div style={{ color: theme.textMuted, fontSize: 14 }}>
+            Player: <strong style={{ color: theme.text }}>{username}</strong>
+          </div>
         </div>
         <p style={{ marginTop: 8, color: theme.textMuted }}>
-          Select a board size. 4x4 is friendly; 6x6 is challenging.
+          Select how your cards should look. You can change difficulty later. If you skip, we’ll use Fish by default.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 12 }}>
-          <ModeCard label="4x4" description="8 pairs, great warm-up" />
-          <ModeCard label="6x6" description="18 pairs, serious challenge" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginTop: 12 }}>
+          <OptionCard value="fish" title="Fish" subtitle="Ocean friends and seashells" icon="🐟" />
+          <OptionCard value="fruits" title="Fruits" subtitle="Juicy and fresh picks" icon="🍓" />
+          <OptionCard value="flower" title="Flower" subtitle="Blooming and bright" icon="🌸" />
         </div>
 
-        <div style={{ display: 'flex', gap: 10, marginTop: 16, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
           <button
             type="button"
             onClick={onContinue}
             className="btn-primary"
-            aria-label="Continue to game"
+            aria-label="Continue to mode selection"
             style={{
               background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryAccent} 100%)`,
               color: '#fff',
@@ -129,9 +136,6 @@ export default function SelectMode() {
           >
             Continue
           </button>
-          <Link to="/theme" style={{ alignSelf: 'center', color: theme.textMuted, textDecoration: 'underline' }}>
-            Change theme
-          </Link>
           <Link to="/login" style={{ alignSelf: 'center', color: theme.textMuted, textDecoration: 'underline' }}>
             Change username
           </Link>

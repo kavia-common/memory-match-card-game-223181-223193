@@ -37,7 +37,8 @@ export default function Login() {
     }
     setError('');
     setUsername(value.trim());
-    navigate('/select');
+    // After login, go to theme selection
+    navigate('/theme');
   };
 
   return (
@@ -127,7 +128,7 @@ export default function Login() {
           </button>
         </form>
         <div style={{ marginTop: 14, fontSize: 13, color: theme.textMuted }}>
-          Or go directly to selection: <Link to="/select">Game modes</Link>
+          Quick links: <Link to="/theme">Theme</Link> · <Link to="/select">Game modes</Link>
         </div>
       </main>
     </div>

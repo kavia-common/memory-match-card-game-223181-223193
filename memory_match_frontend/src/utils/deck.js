@@ -1,4 +1,5 @@
 const EMOJIS = [
+  // Default "Fish" set; Fruits/Flower are applied in GamePage by overriding faces post-shuffle.
   '🐚','🐬','🐳','🐟','🦀','🐠','🪸','🐙','🦈','🪼','🌊','⚓️','🧜‍♀️','🦑','🐡','🌅',
   '🧭','🪙','🪼','🫧','🐢','🦐','🪼','🪞'
 ];

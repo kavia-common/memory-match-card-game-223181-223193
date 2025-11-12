@@ -1,6 +1,7 @@
 import React, { useContext, useMemo, useEffect, useRef, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { ThemeContext } from '../context/ThemeContext';
 import theme from '../styles/theme';
 import StatusBar from '../components/StatusBar';
 import GameBoard from '../components/GameBoard';
@@ -17,6 +18,7 @@ import useTimer from '../hooks/useTimer';
  */
 export default function GamePage() {
   const { username, difficulty } = useContext(AppContext);
+  const { themeKey } = useContext(ThemeContext);
   const shouldRedirect = !username; // compute flag, don't early return before hooks
 
   // Difficulty mapping (kept consistent with prior App.js)
@@ -32,11 +34,34 @@ export default function GamePage() {
     return { cols: 4, rows: 4, pairCount: 8 };
   }, [difficulty]);
 
+  // Map themeKey to deck faces by overriding emojis after deck creation.
+  // Fruits and Flower reuse the same layout/styles/behavior; only faces/labels change.
+  const FACE_SETS = {
+    fish: ['🐚','🐬','🐳','🐟','🦀','🐠','🪸','🐙','🦈','🐢','🦐','🌊','⚓️','🦑','🐡','🌅','🧭','🪙'],
+    fruits: ['🍎','🍌','🍓','🍉','🍇','🍒','🍍','🥝','🍑','🍐','🍊','🍈','🥭','🫐','🍋','🍏','🥥','🍅'],
+    flower: ['🌸','🌼','🌻','🌷','💐','🌹','🌺','🪻','🌱','🍀','🌿','☘️','🌾','🌵','🪴','🌲','🌳','🌴'],
+  };
+
   const [seed, setSeed] = useState(null);
   const initialDeck = useMemo(() => {
     const baseDeck = createDeck(pairCount);
-    return shuffle(baseDeck, seed ?? undefined);
-  }, [pairCount, seed]);
+    const shuffled = shuffle(baseDeck, seed ?? undefined);
+    // Apply themed faces deterministically per pairId ordering
+    const faces = FACE_SETS[themeKey] || FACE_SETS.fish;
+    const themed = [];
+    const pairToFace = new Map();
+    let faceIndex = 0;
+    for (const c of shuffled) {
+      if (!pairToFace.has(c.pairId)) {
+        pairToFace.set(c.pairId, faces[faceIndex % faces.length]);
+        faceIndex += 1;
+      }
+    }
+    for (const c of shuffled) {
+      themed.push({ ...c, face: pairToFace.get(c.pairId) });
+    }
+    return themed;
+  }, [pairCount, seed, themeKey]);
 
   const [cards, setCards] = useState(initialDeck);
   const [flippedIds, setFlippedIds] = useState([]);
@@ -173,6 +198,9 @@ export default function GamePage() {
           onChangeDifficulty={null}
           difficulties={['4x4', '6x6']}
         />
+        <div style={{color: theme.textMuted, fontSize: 12, marginBottom: 8}}>
+          Theme: <strong style={{color: theme.text}}>{(themeKey || 'fish').charAt(0).toUpperCase() + (themeKey || 'fish').slice(1)}</strong>
+        </div>
         <GameBoard
           cols={cols}
           rows={rows}
