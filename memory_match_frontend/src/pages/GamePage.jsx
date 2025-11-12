@@ -18,7 +18,7 @@ import useTimer from '../hooks/useTimer';
  */
 export default function GamePage() {
   const { username, difficulty } = useContext(AppContext);
-  const { themeKey } = useContext(ThemeContext);
+  const { themeKey, setThemeKey } = useContext(ThemeContext);
   const shouldRedirect = !username; // compute flag, don't early return before hooks
 
   // Difficulty mapping (kept consistent with prior App.js)
@@ -197,10 +197,9 @@ export default function GamePage() {
           difficulty={difficulty}
           onChangeDifficulty={null}
           difficulties={['4x4', '6x6']}
+          themeKey={themeKey}
+          onChangeTheme={(next) => setThemeKey(next)}
         />
-        <div style={{color: theme.textMuted, fontSize: 12, marginBottom: 8}}>
-          Theme: <strong style={{color: theme.text}}>{(themeKey || 'fish').charAt(0).toUpperCase() + (themeKey || 'fish').slice(1)}</strong>
-        </div>
         <GameBoard
           cols={cols}
           rows={rows}

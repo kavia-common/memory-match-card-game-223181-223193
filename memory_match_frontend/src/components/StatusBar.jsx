@@ -3,7 +3,7 @@ import theme from '../styles/theme';
 
 /**
  * PUBLIC_INTERFACE
- * StatusBar shows title, timer and move counter, a difficulty selector, and a Restart button.
+ * StatusBar shows title, timer and move counter, a difficulty selector, Theme switcher, and a Restart button.
  * @param {object} props
  * @param {string} props.title
  * @param {string} props.time
@@ -12,6 +12,8 @@ import theme from '../styles/theme';
  * @param {string} [props.difficulty] - Current difficulty label, e.g., '4x4' or '6x6'
  * @param {(next:string)=>void} [props.onChangeDifficulty] - Change difficulty handler
  * @param {string[]} [props.difficulties] - Allowed difficulty options
+ * @param {string} [props.themeKey] - Current theme key: 'fish' | 'fruits' | 'flower'
+ * @param {(next:string)=>void} [props.onChangeTheme] - Handler to change theme key
  */
 export default function StatusBar({
   title,
@@ -21,8 +23,18 @@ export default function StatusBar({
   difficulty,
   onChangeDifficulty,
   difficulties = ['4x4', '6x6'],
+  themeKey,
+  onChangeTheme,
 }) {
-  const canChange = typeof onChangeDifficulty === 'function';
+  const canChangeDifficulty = typeof onChangeDifficulty === 'function';
+  const canChangeTheme = typeof onChangeTheme === 'function';
+
+  // Small compact pill for theme switcher matching Ocean Professional style
+  const themeOptions = [
+    { key: 'fish', label: 'Fish', icon: '🐟' },
+    { key: 'fruits', label: 'Fruits', icon: '🍓' },
+    { key: 'flower', label: 'Flower', icon: '🌸' },
+  ];
 
   return (
     <header
@@ -62,12 +74,13 @@ export default function StatusBar({
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 14,
+          gap: 12,
           justifyContent: 'center',
           background: theme.headerPillBg,
           border: `1px solid ${theme.surfaceBorder}`,
           borderRadius: 999,
           padding: '8px 14px',
+          flexWrap: 'wrap',
         }}
         aria-label="Game status"
       >
@@ -103,6 +116,72 @@ export default function StatusBar({
           }}
           aria-hidden="true"
         />
+
+        {/* Compact Theme Switcher */}
+        <div
+          role="group"
+          aria-label={`Theme selection, current ${(themeKey || 'fish')}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            background: '#fff',
+            border: `1px solid ${theme.surfaceBorder}`,
+            borderRadius: 999,
+            padding: '4px 6px',
+          }}
+        >
+          <span
+            style={{ fontSize: 12, color: theme.textMuted, paddingLeft: 4 }}
+            aria-hidden="true"
+          >
+            Theme
+          </span>
+          <div style={{ display: 'flex', gap: 4 }}>
+            {themeOptions.map((opt) => {
+              const selected = (themeKey || 'fish') === opt.key;
+              return (
+                <button
+                  type="button"
+                  key={opt.key}
+                  onClick={() => canChangeTheme && onChangeTheme(opt.key)}
+                  aria-pressed={selected}
+                  aria-label={`${opt.label} theme${selected ? ' selected' : ''}`}
+                  disabled={!canChangeTheme}
+                  style={{
+                    background: selected
+                      ? `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryAccent} 100%)`
+                      : 'transparent',
+                    color: selected ? '#fff' : theme.text,
+                    border: 'none',
+                    padding: '6px 10px',
+                    borderRadius: 999,
+                    fontWeight: 700,
+                    cursor: canChangeTheme ? 'pointer' : 'default',
+                    boxShadow: selected ? `0 6px 18px ${theme.primaryShadow}` : 'none',
+                    transition: 'all 120ms ease',
+                    minWidth: 44,
+                  }}
+                >
+                  <span aria-hidden="true" style={{ marginRight: 4 }}>
+                    {opt.icon}
+                  </span>
+                  <span style={{ fontSize: 12 }}>{opt.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <span
+          style={{
+            width: 1,
+            height: 20,
+            background: theme.surfaceBorder,
+          }}
+          aria-hidden="true"
+        />
+
         <label
           htmlFor="difficulty-select"
           style={{ fontSize: 12, color: theme.textMuted }}
@@ -113,8 +192,8 @@ export default function StatusBar({
           id="difficulty-select"
           aria-label={`Select difficulty, current ${difficulty || ''}`}
           value={difficulty}
-          onChange={(e) => canChange && onChangeDifficulty(e.target.value)}
-          disabled={!canChange}
+          onChange={(e) => canChangeDifficulty && onChangeDifficulty(e.target.value)}
+          disabled={!canChangeDifficulty}
           style={{
             appearance: 'none',
             background: '#fff',
@@ -123,7 +202,7 @@ export default function StatusBar({
             padding: '6px 10px',
             color: theme.text,
             fontWeight: 600,
-            cursor: canChange ? 'pointer' : 'default',
+            cursor: canChangeDifficulty ? 'pointer' : 'default',
           }}
         >
           {difficulties.map((opt) => (
