@@ -25,19 +25,13 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
   // Equal-width columns; card size is driven by CSS variables
   const gridTemplateColumns = useMemo(() => `repeat(${cols}, minmax(0, 1fr))`, [cols]);
 
-  // Override card size variable for 6x6 boards to use the smaller token
+  // Fixed card size for all difficulties (both 4x4 and 6x6 use the same size)
   const cardSizeVar = useMemo(() => {
-    const isDense = cols >= 6 || rows >= 6;
-    return isDense
-      ? {
-          '--card-size': 'var(--card-size-sm)',
-          '--mm-card-size': 'var(--card-size-sm)',
-        }
-      : {
-          '--card-size': 'var(--card-size)',
-          '--mm-card-size': 'var(--card-size)',
-        };
-  }, [cols, rows]);
+    return {
+      '--card-size': 'var(--card-size)',
+      '--mm-card-size': 'var(--card-size)',
+    };
+  }, []);
 
   const prefersReducedMotion = typeof window !== 'undefined' &&
     window.matchMedia &&
