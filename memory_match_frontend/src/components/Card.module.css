@@ -1,3 +1,28 @@
+:root {
+  /* PUBLIC_INTERFACE
+     --mm-card-size is the base size for cards; update this once to tweak all cards.
+     It is responsive, with a minimum touch target of 40px to satisfy accessibility. */
+  --mm-card-size: clamp(40px, 12vw, 84px);
+  --mm-card-radius: 12px;
+  --mm-card-radius-focus: 14px;
+  --mm-card-font-min: 16px;
+  --mm-card-font-max: 28px;
+}
+
+/* On larger screens, slightly increase card size while keeping grid compact */
+@media (min-width: 768px) {
+  :root {
+    --mm-card-size: clamp(48px, 10.5vw, 96px);
+  }
+}
+
+/* On very small screens, ensure touch targets remain >= 40px */
+@media (max-width: 360px) {
+  :root {
+    --mm-card-size: 42px; /* keep adequate tap size */
+  }
+}
+
 .cardButton {
   appearance: none;
   -webkit-appearance: none;
@@ -5,17 +30,21 @@
   border: none;
   padding: 0;
   width: 100%;
+  /* Use fixed size driven by CSS variable but allow grid to shrink gracefully */
   aspect-ratio: 1 / 1;
   cursor: pointer;
   position: relative;
   perspective: 800px;
-  border-radius: 14px;
+  border-radius: var(--mm-card-radius);
   outline: none;
+  /* Ensure the card doesn't become smaller than touch target */
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .cardButton:focus-visible {
   box-shadow: 0 0 0 3px rgba(244,114,182,0.6);
-  border-radius: 16px;
+  border-radius: var(--mm-card-radius-focus);
 }
 
 .cardButton:disabled {
@@ -28,17 +57,18 @@
   position: relative;
   transform-style: preserve-3d;
   transition: transform 360ms ease;
-  border-radius: 14px;
+  border-radius: var(--mm-card-radius);
   box-shadow: 0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
 }
 
+/* Both faces */
 .cardFront,
 .cardBack {
   background: var(--card-surface, #fff);
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border-radius: 14px;
+  border-radius: var(--mm-card-radius);
   border: 1px solid var(--card-border, #f1e4ee);
   display: flex;
   align-items: center;
@@ -64,10 +94,12 @@
   border: 1px solid rgba(16,185,129,0.3);
 }
 
+/* Font sizes scale with card size but are capped for readability */
 .cardFace {
-  font-size: clamp(20px, 5vw, 36px);
+  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.35), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
+  line-height: 1;
 }
 
 .faceText {
@@ -75,6 +107,6 @@
 }
 
 .backAccent {
-  font-size: clamp(18px, 4vw, 28px);
+  font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.28), calc(var(--mm-card-font-max) - 2px));
   color: rgba(244, 114, 182, 0.9);
 }
