@@ -1,9 +1,13 @@
 :root {
   /* PUBLIC_INTERFACE
-     --card-size and --card-size-sm set card edge length globally.
-     For this task, both are fixed to 25px across all difficulties. */
-  --card-size: 25px;
-  --card-size-sm: 25px;
+     Global card sizing tokens.
+     QUICK TWEAK: Adjust only --card-size (default) to change size app-wide.
+     The final computed size is clamp(--card-size, --card-size-min, --card-size-max).
+  */
+  --card-size-min: 20px;
+  --card-size-max: 25px;
+  --card-size: 22px; /* <- Quick tweak point */
+
   /* Backward compatibility (Card.module.css references --mm-card-size) */
   --mm-card-size: var(--card-size);
 

@@ -26,9 +26,12 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
   const gridTemplateColumns = useMemo(() => `repeat(${cols}, minmax(0, 1fr))`, [cols]);
 
   // Fixed card size for all difficulties (both 4x4 and 6x6 use the same size)
+  // PUBLIC_INTERFACE
+  // To override per-difficulty in the future, set '--card-size' to a custom value here,
+  // e.g., difficulty === '6x6' ? '21px' : '22px'. It will still be clamped by min/max.
   const cardSizeVar = useMemo(() => {
     return {
-      '--card-size': 'var(--card-size)',
+      '--card-size': 'var(--card-size)',  // keep default; clamped in CSS
       '--mm-card-size': 'var(--card-size)',
     };
   }, []);

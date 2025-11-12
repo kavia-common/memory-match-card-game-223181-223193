@@ -1,13 +1,14 @@
 :root {
   /* PUBLIC_INTERFACE
      --mm-card-size mirrors :root --card-size for backward compatibility.
-     Adjust --card-size or --card-size-sm in index.css to tune sizes app-wide. */
+     Adjust --card-size in index.css to tune sizes app-wide. */
   --mm-card-size: var(--card-size);
   --mm-card-radius: 6px; /* reduced rounding to fit small size gracefully */
   --mm-card-radius-focus: 8px;
-  /* Font clamps tailored for 25px cards to avoid overflow while keeping legible */
-  --mm-card-font-min: 10px;
-  --mm-card-font-max: 14px;
+
+  /* Font clamps tailored for 20–25px cards for legibility without overflow */
+  --mm-card-font-min: 9px;
+  --mm-card-font-max: 13px;
 }
 
 .cardButton {
@@ -16,16 +17,17 @@
   background: transparent;
   border: none;
   padding: 0;
-  width: 100%;
-  aspect-ratio: 1 / 1;
+  width: clamp(var(--card-size), var(--card-size-min), var(--card-size-max));
+  height: clamp(var(--card-size), var(--card-size-min), var(--card-size-max));
+  box-sizing: border-box;
   cursor: pointer;
   position: relative;
   perspective: 900px;
   border-radius: var(--mm-card-radius);
   outline: none;
-  /* Keep minimum size equal to card size so we don't exceed 25px target */
-  min-width: 25px;
-  min-height: 25px;
+  /* Ensure minimums are not above 20px */
+  min-width: var(--card-size-min);
+  min-height: var(--card-size-min);
   /* Elevation on hover/press via transform on inner .card to keep layout stable */
 }
 
@@ -41,6 +43,7 @@
   width: 100%;
   height: 100%;
   position: relative;
+  box-sizing: border-box;
   transform-style: preserve-3d;
   transition: transform var(--dur-med) var(--easing-snap), box-shadow var(--dur-med) var(--easing-soft);
   border-radius: var(--mm-card-radius);
@@ -82,6 +85,7 @@
   align-items: center;
   justify-content: center;
   will-change: transform, opacity;
+  box-sizing: border-box; /* Prevent border from inflating size */
 }
 
 .cardFront {
@@ -90,7 +94,7 @@
 }
 
 .cardBack {
-  background: var(--card-back, #fde2f1);
+  background: var(--card-back, #fde2f1); /* pink theme */
 }
 
 /* Flip states */
@@ -105,8 +109,8 @@
 
 /* Font sizes scale with card size but are capped for readability */
 .cardFace {
-  /* For 25px cards, keep within 10–14px range and use 0.36x scale as center */
-  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.36), var(--mm-card-font-max));
+  /* For 20–25px cards, keep within 9–13px and use ~0.38x as center */
+  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.38), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
   line-height: 1;
@@ -120,7 +124,7 @@
 }
 
 .backAccent {
-  font-size: clamp(calc(var(--mm-card-font-min) - 1px), calc(var(--mm-card-size) * 0.28), calc(var(--mm-card-font-max) - 1px));
+  font-size: clamp(calc(var(--mm-card-font-min) - 1px), calc(var(--mm-card-size) * 0.3), calc(var(--mm-card-font-max) - 1px));
   color: rgba(244, 114, 182, 0.9);
 }
 
