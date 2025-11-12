@@ -67,12 +67,31 @@ export default function Login() {
           padding: 22,
         }}
       >
-        {/* Centered logo at the top of the card */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 4, marginBottom: 14 }}>
+        {/* Header area with app title and logo */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 4, marginBottom: 14 }}>
+          <h1
+            style={{
+              // Ocean Professional: elegant typography with primary gradient accent
+              margin: 0,
+              marginBottom: 8,
+              fontSize: 26,
+              lineHeight: 1.15,
+              fontWeight: 900,
+              letterSpacing: 0.3,
+              textAlign: 'center',
+              background: `linear-gradient(135deg, ${theme.primary} 0%, ${theme.primaryAccent} 100%)`,
+              WebkitBackgroundClip: 'text',
+              backgroundClip: 'text',
+              color: 'transparent',
+            }}
+            aria-label="Memory Match Vamshi"
+          >
+            Memory Match Vamshi
+          </h1>
           <Logo size="md" align="center" />
         </div>
 
-        <h1
+        <h2
           style={{
             marginTop: 0,
             marginBottom: 6,
@@ -83,7 +102,7 @@ export default function Login() {
           }}
         >
           Welcome back
-        </h1>
+        </h2>
         <p style={{ marginTop: 0, color: theme.textMuted, textAlign: 'center' }}>
           Test your memory. Let’s start by choosing a username.
         </p>
