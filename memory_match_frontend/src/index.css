@@ -1,14 +1,4 @@
-:root {
-  /* Expose public variable for global tweaking if needed */
-  --mm-card-size: clamp(40px, 12vw, 84px);
-}
-
-@media (min-width: 768px) {
-  :root {
-    --mm-card-size: clamp(48px, 10.5vw, 96px);
-  }
-}
-
+/* Removed global --mm-card-size responsive overrides to keep cards exactly 100px. */
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',

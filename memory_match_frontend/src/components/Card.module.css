@@ -1,25 +1,22 @@
 :root {
   /* PUBLIC_INTERFACE
-     --mm-card-size is the base size for cards; update this once to tweak all cards.
-     It is responsive, with a minimum touch target of 40px to satisfy accessibility. */
-  --mm-card-size: clamp(40px, 12vw, 84px);
+     --mm-card-size is the fixed face size for each card. Requested: 100px.
+     Use --mm-card-scale to uniformly scale down when the container is too narrow.
+     Keep minimum touch target >= 40px.
+  */
+  --mm-card-size: 100px;
+  --mm-card-scale: 1; /* GameBoard may override to fit small containers */
   --mm-card-radius: 12px;
   --mm-card-radius-focus: 14px;
   --mm-card-font-min: 16px;
   --mm-card-font-max: 28px;
 }
 
-/* On larger screens, slightly increase card size while keeping grid compact */
-@media (min-width: 768px) {
+/* Override any previous responsive rules to keep the card size fixed at 100px.
+   We retain scaling via --mm-card-scale only when necessary. */
+@media (min-width: 0px) {
   :root {
-    --mm-card-size: clamp(48px, 10.5vw, 96px);
-  }
-}
-
-/* On very small screens, ensure touch targets remain >= 40px */
-@media (max-width: 360px) {
-  :root {
-    --mm-card-size: 42px; /* keep adequate tap size */
+    --mm-card-size: 100px;
   }
 }
 
@@ -29,9 +26,9 @@
   background: transparent;
   border: none;
   padding: 0;
-  width: 100%;
-  /* Use fixed size driven by CSS variable but allow grid to shrink gracefully */
-  aspect-ratio: 1 / 1;
+  /* Exact face size with optional uniform scale */
+  width: calc(var(--mm-card-size) * var(--mm-card-scale));
+  height: calc(var(--mm-card-size) * var(--mm-card-scale));
   cursor: pointer;
   position: relative;
   perspective: 800px;
@@ -96,7 +93,7 @@
 
 /* Font sizes scale with card size but are capped for readability */
 .cardFace {
-  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.35), var(--mm-card-font-max));
+  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.35 * var(--mm-card-scale)), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
   line-height: 1;
@@ -107,6 +104,6 @@
 }
 
 .backAccent {
-  font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.28), calc(var(--mm-card-font-max) - 2px));
+  font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.28 * var(--mm-card-scale)), calc(var(--mm-card-font-max) - 2px));
   color: rgba(244, 114, 182, 0.9);
 }
