@@ -11,7 +11,7 @@ import useTimer from './hooks/useTimer';
 import theme from './styles/theme';
 
 /**
- * Root App rendering Memory Match Game.
+ * Root App rendering Memory Match Game with difficulty selection (4x4, 6x6).
  * Provides header, responsive game grid, controls, and win modal.
  * Uses environment variables only for non-critical toggles; no external API calls.
  */
@@ -22,29 +22,36 @@ function App() {
   const isDev =
     (process.env.REACT_APP_NODE_ENV || process.env.NODE_ENV) !== 'production';
 
-  // Determine grid size based on viewport, recompute on resize
-  const [cols, setCols] = useState(4);
-  const [rows, setRows] = useState(4);
-  useEffect(() => {
-    const handleResize = () => {
-      const w = window.innerWidth;
-      if (w >= 1024) {
-        setCols(6);
-        setRows(4); // 24 cards (12 pairs)
-      } else if (w >= 640) {
-        setCols(5);
-        setRows(4); // 20 cards (10 pairs)
-      } else {
-        setCols(4);
-        setRows(4); // 16 cards (8 pairs)
-      }
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize, { passive: true });
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  // Difficulty: '4x4' | '6x6' (persisted)
+  const DIFFICULTIES = {
+    EASY: '4x4',
+    HARD: '6x6',
+  };
+  const [difficulty, setDifficulty] = useState(() => {
+    try {
+      return localStorage.getItem('mm_difficulty') || DIFFICULTIES.EASY;
+    } catch {
+      return DIFFICULTIES.EASY;
+    }
+  });
 
-  const pairCount = useMemo(() => Math.floor((cols * rows) / 2), [cols, rows]);
+  // Grid size derived from difficulty
+  const { cols, rows, pairCount } = useMemo(() => {
+    if (difficulty === DIFFICULTIES.HARD) {
+      return { cols: 6, rows: 6, pairCount: 18 };
+    }
+    // default EASY
+    return { cols: 4, rows: 4, pairCount: 8 };
+  }, [difficulty]);
+
+  // Persist difficulty
+  useEffect(() => {
+    try {
+      localStorage.setItem('mm_difficulty', difficulty);
+    } catch {
+      // ignore storage errors
+    }
+  }, [difficulty]);
 
   // Seed for deterministic shuffles when needed (e.g., tests)
   const [seed, setSeed] = useState(null);
@@ -56,24 +63,29 @@ function App() {
   }, [pairCount, seed]);
 
   const [cards, setCards] = useState(initialDeck);
-  useEffect(() => {
-    // Reset deck when layout or seed change
-    setCards(initialDeck);
-    resetTimer();
-    setMoves(0);
-    setWin(false);
-    setFirstFlipDone(false);
-    setFlippedIds([]);
-  }, [initialDeck]);
-
   const [flippedIds, setFlippedIds] = useState([]); // currently flipped (max 2)
   const [moves, setMoves] = useState(0);
   const [win, setWin] = useState(false);
   const [firstFlipDone, setFirstFlipDone] = useState(false);
   const liveRegionRef = useRef(null);
 
-  const { seconds, start: startTimer, stop: stopTimer, reset: resetTimer, running } =
-    useTimer();
+  const {
+    seconds,
+    start: startTimer,
+    stop: stopTimer,
+    reset: resetTimer,
+    running,
+  } = useTimer();
+
+  // Reset deck and core counters when deck source changes (pairCount/seed/difficulty)
+  useEffect(() => {
+    setCards(initialDeck);
+    resetTimer();
+    setMoves(0);
+    setWin(false);
+    setFirstFlipDone(false);
+    setFlippedIds([]);
+  }, [initialDeck, resetTimer]);
 
   // Start timer on first flip
   useEffect(() => {
@@ -156,6 +168,12 @@ function App() {
     // Deck/state will reset via useEffect on initialDeck change
   };
 
+  const handleChangeDifficulty = (next) => {
+    if (next === difficulty) return;
+    setDifficulty(next);
+    // timer/moves reset will occur via initialDeck change (pairCount changes)
+  };
+
   const onPlayAgain = () => {
     setWin(false);
     handleRestart();
@@ -191,7 +209,7 @@ function App() {
       />
       <main
         role="main"
-        aria-label="Memory Match Game"
+        aria-label={`Memory Match Game at ${difficulty} difficulty`}
         style={{
           width: '100%',
           maxWidth: 1100,
@@ -207,6 +225,9 @@ function App() {
           time={timeFormatted}
           moves={moves}
           onRestart={handleRestart}
+          difficulty={difficulty}
+          onChangeDifficulty={handleChangeDifficulty}
+          difficulties={[DIFFICULTIES.EASY, DIFFICULTIES.HARD]}
         />
         <GameBoard
           cols={cols}
@@ -214,16 +235,18 @@ function App() {
           cards={cards}
           onFlip={handleFlip}
           theme={theme}
+          difficulty={difficulty}
         />
         <WinModal
           open={win}
           time={timeFormatted}
           moves={moves}
           onPlayAgain={onPlayAgain}
+          difficulty={difficulty}
         />
         {isDev && (
           <p style={{ marginTop: 10, fontSize: 12, color: theme.textMuted }}>
-            Dev: grid {cols}×{rows} • pairs {pairCount}
+            Dev: grid {cols}×{rows} • pairs {pairCount} • difficulty {difficulty}
           </p>
         )}
       </main>

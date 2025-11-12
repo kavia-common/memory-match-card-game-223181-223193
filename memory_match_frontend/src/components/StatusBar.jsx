@@ -3,9 +3,27 @@ import theme from '../styles/theme';
 
 /**
  * PUBLIC_INTERFACE
- * StatusBar shows title, timer and move counter, and a Restart button.
+ * StatusBar shows title, timer and move counter, a difficulty selector, and a Restart button.
+ * @param {object} props
+ * @param {string} props.title
+ * @param {string} props.time
+ * @param {number} props.moves
+ * @param {() => void} props.onRestart
+ * @param {string} [props.difficulty] - Current difficulty label, e.g., '4x4' or '6x6'
+ * @param {(next:string)=>void} [props.onChangeDifficulty] - Change difficulty handler
+ * @param {string[]} [props.difficulties] - Allowed difficulty options
  */
-export default function StatusBar({ title, time, moves, onRestart }) {
+export default function StatusBar({
+  title,
+  time,
+  moves,
+  onRestart,
+  difficulty,
+  onChangeDifficulty,
+  difficulties = ['4x4', '6x6'],
+}) {
+  const canChange = typeof onChangeDifficulty === 'function';
+
   return (
     <header
       style={{
@@ -25,7 +43,7 @@ export default function StatusBar({ title, time, moves, onRestart }) {
             fontWeight: 700,
             letterSpacing: 0.2,
           }}
-          aria-label={`${title}`}
+          aria-label={`${title}${difficulty ? `, difficulty ${difficulty}` : ''}`}
         >
           {title}
         </h1>
@@ -77,6 +95,43 @@ export default function StatusBar({ title, time, moves, onRestart }) {
         >
           🎯 {moves} moves
         </span>
+        <span
+          style={{
+            width: 1,
+            height: 20,
+            background: theme.surfaceBorder,
+          }}
+          aria-hidden="true"
+        />
+        <label
+          htmlFor="difficulty-select"
+          style={{ fontSize: 12, color: theme.textMuted }}
+        >
+          Difficulty
+        </label>
+        <select
+          id="difficulty-select"
+          aria-label={`Select difficulty, current ${difficulty || ''}`}
+          value={difficulty}
+          onChange={(e) => canChange && onChangeDifficulty(e.target.value)}
+          disabled={!canChange}
+          style={{
+            appearance: 'none',
+            background: '#fff',
+            border: `1px solid ${theme.surfaceBorder}`,
+            borderRadius: 10,
+            padding: '6px 10px',
+            color: theme.text,
+            fontWeight: 600,
+            cursor: canChange ? 'pointer' : 'default',
+          }}
+        >
+          {difficulties.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div style={{ textAlign: 'right' }}>

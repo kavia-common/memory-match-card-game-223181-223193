@@ -4,8 +4,14 @@ import theme from '../styles/theme';
 /**
  * PUBLIC_INTERFACE
  * WinModal displays end-of-game stats and provides a play again button.
+ * @param {object} props
+ * @param {boolean} props.open
+ * @param {string} props.time
+ * @param {number} props.moves
+ * @param {() => void} props.onPlayAgain
+ * @param {string} [props.difficulty] - Difficulty used for the completed game.
  */
-export default function WinModal({ open, time, moves, onPlayAgain }) {
+export default function WinModal({ open, time, moves, onPlayAgain, difficulty }) {
   const dialogRef = useRef(null);
 
   useEffect(() => {
@@ -20,7 +26,7 @@ export default function WinModal({ open, time, moves, onPlayAgain }) {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="You won the game"
+      aria-label={`You won the game${difficulty ? ` on ${difficulty} difficulty` : ''}`}
       tabIndex={-1}
       ref={dialogRef}
       style={{
@@ -60,7 +66,7 @@ export default function WinModal({ open, time, moves, onPlayAgain }) {
           Congratulations!
         </div>
         <p style={{ marginTop: 0, color: theme.textMuted }}>
-          You completed the Ocean Memory Match.
+          You completed the Ocean Memory Match{difficulty ? ` on ${difficulty}` : ''}.
         </p>
 
         <div
