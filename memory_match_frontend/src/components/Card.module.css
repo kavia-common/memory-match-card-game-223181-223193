@@ -1,95 +1,78 @@
 :root {
   /* PUBLIC_INTERFACE
-     --mm-card-size mirrors :root --card-size for backward compatibility.
-     Inner card box is exactly 100px via --card-inner-size in index.css. */
-  --mm-card-size: var(--card-size);
-  --mm-card-radius: 10px; /* slightly larger rounding for 100px */
-  --mm-card-radius-focus: 12px;
-
-  /* Font sizes tuned for 100px cards */
+     --mm-card-size is the base size for cards; update this once to tweak all cards.
+     It is responsive, with a minimum touch target of 40px to satisfy accessibility. */
+  --mm-card-size: clamp(40px, 12vw, 84px);
+  --mm-card-radius: 12px;
+  --mm-card-radius-focus: 14px;
   --mm-card-font-min: 16px;
-  --mm-card-font-max: 42px;
+  --mm-card-font-max: 28px;
 }
 
-/* Outer clickable wrapper - must fit the inner box exactly */
+/* On larger screens, slightly increase card size while keeping grid compact */
+@media (min-width: 768px) {
+  :root {
+    --mm-card-size: clamp(48px, 10.5vw, 96px);
+  }
+}
+
+/* On very small screens, ensure touch targets remain >= 40px */
+@media (max-width: 360px) {
+  :root {
+    --mm-card-size: 42px; /* keep adequate tap size */
+  }
+}
+
 .cardButton {
   appearance: none;
   -webkit-appearance: none;
   background: transparent;
-  border: none;            /* avoid adding to total size */
-  padding: 0;              /* avoid adding to total size */
-  width: var(--card-size); /* equals --card-inner-size */
-  height: var(--card-size);
-  box-sizing: border-box;  /* ensure future borders won't inflate */
+  border: none;
+  padding: 0;
+  width: 100%;
+  /* Use fixed size driven by CSS variable but allow grid to shrink gracefully */
+  aspect-ratio: 1 / 1;
   cursor: pointer;
   position: relative;
-  perspective: 900px;      /* 3D flip */
+  perspective: 800px;
   border-radius: var(--mm-card-radius);
   outline: none;
+  /* Ensure the card doesn't become smaller than touch target */
+  min-width: 40px;
+  min-height: 40px;
 }
 
-/* Focus ring handled on inner .card so outer size remains unchanged */
 .cardButton:focus-visible {
-  /* no outline to prevent layout shifts */
+  box-shadow: 0 0 0 3px rgba(244,114,182,0.6);
+  border-radius: var(--mm-card-radius-focus);
 }
 
 .cardButton:disabled {
   cursor: default;
 }
 
-/* Inner 3D flipping element sized to the same box */
 .card {
   width: 100%;
   height: 100%;
   position: relative;
-  box-sizing: border-box;
   transform-style: preserve-3d;
-  transition: transform var(--dur-med) var(--easing-snap), box-shadow var(--dur-med) var(--easing-soft);
+  transition: transform 360ms ease;
   border-radius: var(--mm-card-radius);
   box-shadow: 0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
-  will-change: transform;
-  overflow: hidden; /* prevent focus ring/inner content from spilling */
 }
 
-/* Hover/active elevation micro-interactions (mouse/pen only) */
-@media (hover: hover) and (pointer: fine) {
-  .cardButton:hover .card:not(.flipped):not(.matched) {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 12px 26px rgba(17, 24, 39, 0.12);
-  }
-  .cardButton:active .card:not(.flipped):not(.matched) {
-    transform: translateY(0) scale(0.995);
-    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.10);
-  }
-}
-
-/* Custom focus-visible ring drawn inside the available space */
-.cardButton:focus-visible .card {
-  box-shadow:
-    0 0 0 var(--focus-offset, 2px) #fff inset,
-    0 0 0 calc(var(--focus-width, 3px) + var(--focus-offset, 2px)) var(--focus-color, rgba(244,114,182,0.8)) inset,
-    0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
-  border-radius: var(--mm-card-radius-focus);
-}
-
-/* Both faces occupy the inner 100px exactly */
+/* Both faces */
 .cardFront,
 .cardBack {
+  background: var(--card-surface, #fff);
   position: absolute;
-  left: 0;
-  top: 0;
-  width: var(--mm-card-size);   /* equals 100px */
-  height: var(--mm-card-size);  /* equals 100px */
+  inset: 0;
   backface-visibility: hidden;
   border-radius: var(--mm-card-radius);
   border: 1px solid var(--card-border, #f1e4ee);
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform, opacity;
-  box-sizing: border-box; /* borders stay inside the fixed box */
-  background: var(--card-surface, #fff);
-  overflow: hidden;
 }
 
 .cardFront {
@@ -101,26 +84,22 @@
   background: var(--card-back, #fde2f1);
 }
 
-/* Flip states */
 .card.flipped {
-  transform: rotateY(180deg) translateZ(0);
-}
-.card.matched {
-  transform: rotateY(180deg) translateZ(0);
-  box-shadow: 0 12px 24px rgba(16,185,129,0.18), 0 4px 8px rgba(16,185,129,0.12);
-  /* border remains contained by border-box on faces; no outer border added */
+  transform: rotateY(180deg);
 }
 
-/* Face content - clamp for readability at 100px */
+.card.matched {
+  transform: rotateY(180deg);
+  box-shadow: 0 12px 24px rgba(16,185,129,0.18), 0 4px 8px rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.3);
+}
+
+/* Font sizes scale with card size but are capped for readability */
 .cardFace {
-  /* Scales between 16px and 42px based on card size, with a sweet spot at ~44% of size */
-  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.44), var(--mm-card-font-max));
+  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.35), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
   line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .faceText {
@@ -128,29 +107,6 @@
 }
 
 .backAccent {
-  font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.34), calc(var(--mm-card-font-max) - 4px));
+  font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.28), calc(var(--mm-card-font-max) - 2px));
   color: rgba(244, 114, 182, 0.9);
-}
-
-/* Entrance animation for cards (applied inline with delay via style prop) */
-@keyframes cardEntrance {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.cardEntrance {
-  animation: cardEntrance var(--dur-med) var(--easing-soft) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .card {
-    transition: none;
-  }
-  .cardEntrance {
-    animation: none;
-  }
 }

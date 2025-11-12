@@ -16,41 +16,30 @@ import theme from '../styles/theme';
 export default function GameBoard({ cols, rows, cards, onFlip, theme: passedTheme, difficulty }) {
   const t = passedTheme || theme;
 
-  // Equal-width columns; card size is driven by CSS variables
+  // Grid sizing: smaller gaps for 6x6 to keep board compact; slightly larger for 4x4
+  const gap = useMemo(() => {
+    if (cols >= 6 || rows >= 6) return 8;
+    return 10;
+  }, [cols, rows]);
+
+  // Use equal columns; card size itself is driven by CSS variable in Card.module.css
   const gridTemplateColumns = useMemo(() => `repeat(${cols}, minmax(0, 1fr))`, [cols]);
 
-  // PUBLIC_INTERFACE
-  // Card size is defined globally via CSS variables; only expose grid gap/padding variables here.
-  const boardVars = useMemo(() => {
-    return {
-      // Card sizing is global; do not override here.
-      '--grid-gap': 'var(--grid-gap, 10px)',
-      '--board-padding': 'var(--board-padding, 12px)',
-    };
-  }, []);
-
-  // Reduced motion detection
-  const prefersReducedMotion = typeof window !== 'undefined' &&
-    window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Difficulty class to enable CSS-based overrides
-  const difficultyClass =
-    difficulty === '6x6'
-      ? 'board--hard'
-      : difficulty === '4x4'
-      ? 'board--easy'
-      : '';
+  // Board max width tuned so cards remain smaller while maintaining responsive growth
+  const maxWidth = useMemo(() => {
+    // heuristic: card size var ~ 84-96px max; include gaps
+    const approximateCard = 96; // aligns with --mm-card-size max on larger screens
+    return Math.min(1100, cols * approximateCard + (cols - 1) * gap + 24);
+  }, [cols, gap]);
 
   return (
     <section
       aria-label={`Game board ${cols} by ${rows}${difficulty ? `, difficulty ${difficulty}` : ''}`}
-      className={difficultyClass}
       style={{
         display: 'grid',
         gridTemplateColumns,
-        gap: 'var(--grid-gap)',
-        padding: 'var(--board-padding)',
+        gap,
+        padding: 10,
         background: t.boardBg,
         borderRadius: 14,
         border: `1px solid ${t.surfaceBorder}`,
@@ -58,30 +47,19 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
         maxWidth: '100%',
         width: '100%',
         margin: '0 auto',
-        // Ensure outlines are not clipped by adding minimal extra space if custom focus ring grows
-        // Note: main padding is already generous; additional safe-area can be added via CSS vars if needed.
-        ...boardVars,
+        // Provide a comfortable container width target while remaining responsive
+        // This helps keep smaller cards consistent in size as the grid scales.
+        '--mm-card-size': 'var(--mm-card-size)',
       }}
     >
-      {cards.map((card, idx) => {
-        const delay = prefersReducedMotion ? '0ms' : `${Math.min(idx * 30, 240)}ms`;
-        const entranceClass = 'cardEntrance';
-        // Note: The entranceClass only animates opacity in CSS to avoid breaking 3D perspective.
-        // Do not apply transforms on this wrapper, as it sits above the perspective context (.cardButton).
-        return (
-          <div
-            key={card.id}
-            style={{ animationDelay: delay }}
-            className={entranceClass}
-          >
-            <Card
-              card={card}
-              onFlip={() => onFlip(card.id)}
-              theme={t}
-            />
-          </div>
-        );
-      })}
+      {cards.map((card) => (
+        <Card
+          key={card.id}
+          card={card}
+          onFlip={() => onFlip(card.id)}
+          theme={t}
+        />
+      ))}
     </section>
   );
 }

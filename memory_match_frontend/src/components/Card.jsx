@@ -13,8 +13,7 @@ export default function Card({ card, onFlip, theme }) {
   }, [card.isMatched, card.isFlipped]);
 
   const handleKey = (e) => {
-    const isSpace = e.key === ' ' || e.key === 'Spacebar';
-    if (e.key === 'Enter' || isSpace) {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       if (!card.isMatched) onFlip();
     }

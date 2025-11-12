@@ -1,64 +1,12 @@
 :root {
-  /* PUBLIC_INTERFACE
-     Global card sizing tokens.
-     The inner content box is exactly 100px square. The outer wrapper fits it precisely.
-  */
-  --card-inner-size: 100px;
-  --card-size: var(--card-inner-size);
-
-  /* Backward compatibility (Card.module.css references --mm-card-size) */
-  --mm-card-size: var(--card-size);
-
-  /* Grid layout tokens
-     --grid-gap: spacing between cards; tuned for compact 60px cards.
-     --board-padding: inner padding around the board to prevent focus ring clipping.
-     Difficulty-specific overrides (via class on board) can adjust these.
-  */
-  --grid-gap: 10px;        /* sensible default; unchanged per instruction */
-  --board-padding: 12px;   /* unchanged per instruction */
-
-  /* Motion tokens */
-  --easing-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --easing-soft: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --dur-fast: 120ms;
-  --dur-med: 320ms;
-  --dur-slow: 480ms;
-
-  /* Focus ring tokens (Ocean Professional) */
-  --focus-color: rgba(244,114,182,0.8); /* theme.primary with alpha */
-  --focus-offset: 2px;
-  --focus-width: 3px;
-
-  /* Status gradient helpers */
-  --status-grad-start: #FFF1F2; /* rose-50 */
-  --status-grad-end: #FAF5FF;   /* purple-50 */
+  /* Expose public variable for global tweaking if needed */
+  --mm-card-size: clamp(40px, 12vw, 84px);
 }
 
-/* Difficulty modifiers (optional). Apply one of these classes to the board root.
-   4x4 benefits from slightly larger gaps; 6x6 should be tighter but leave room for focus ring.
-*/
-.board--easy {
-  --grid-gap: 12px;
-  --board-padding: 14px;
-}
-.board--hard {
-  --grid-gap: 8px;
-  --board-padding: 12px;
-}
-
-/* Prefer-reduced-motion keeps tokens but does not change card size */
-@media (prefers-reduced-motion: reduce) {
+@media (min-width: 768px) {
   :root {
-    --dur-fast: 1ms;
-    --dur-med: 1ms;
-    --dur-slow: 1ms;
-    --easing-snap: linear;
-    --easing-soft: linear;
+    --mm-card-size: clamp(48px, 10.5vw, 96px);
   }
-}
-
-html, body {
-  height: 100%;
 }
 
 body {
@@ -80,43 +28,18 @@ button {
   font-family: inherit;
 }
 
-/* Generic focus-visible ring utility */
-:where(button, [role="button"], select, a, input, textarea):focus {
-  outline: none;
-}
-:where(button, [role="button"], select, a, input, textarea):focus-visible {
-  box-shadow:
-    0 0 0 var(--focus-offset) #fff,
-    0 0 0 calc(var(--focus-width) + var(--focus-offset)) var(--focus-color);
-  border-radius: 12px;
+.btn-restart:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
-/* Restart button micro-interactions */
-.btn-restart {
-  will-change: transform, opacity;
-  transition: transform var(--dur-fast) var(--easing-soft),
-              opacity var(--dur-fast) var(--easing-soft),
-              box-shadow var(--dur-med) var(--easing-soft);
-}
-.btn-restart:hover {
-  transform: translateY(-1px) scale(1.01);
-  opacity: 0.98;
-}
 .btn-restart:active {
-  transform: translateY(0) scale(0.99);
-  opacity: 0.94;
+  transform: translateY(0);
+  opacity: 0.9;
 }
 
 @media (max-width: 480px) {
   .btn-restart {
     padding: 10px 12px !important;
   }
-}
-
-/* Subtle utilities */
-.status-gradient {
-  background: linear-gradient(135deg, var(--status-grad-start), var(--status-grad-end));
-}
-.shadow-soft {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
