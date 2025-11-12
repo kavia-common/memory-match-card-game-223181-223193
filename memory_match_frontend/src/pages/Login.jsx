@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import theme from '../styles/theme';
+import Logo from '../components/Logo';
 
 /**
  * PUBLIC_INTERFACE
@@ -66,10 +67,27 @@ export default function Login() {
           padding: 22,
         }}
       >
-        <h1 style={{ marginTop: 0, marginBottom: 8, fontSize: 26, fontWeight: 800, color: theme.text }}>
-          Memory Match
+        {/* Centered logo at the top of the card */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 4, marginBottom: 14 }}>
+          <Logo size="md" align="center" />
+        </div>
+
+        <h1
+          style={{
+            marginTop: 0,
+            marginBottom: 6,
+            fontSize: 20,
+            fontWeight: 800,
+            color: theme.text,
+            textAlign: 'center',
+          }}
+        >
+          Welcome back
         </h1>
-        <p style={{ marginTop: 0, color: theme.textMuted }}>Test your memory. Let’s start by choosing a username.</p>
+        <p style={{ marginTop: 0, color: theme.textMuted, textAlign: 'center' }}>
+          Test your memory. Let’s start by choosing a username.
+        </p>
+
         <form onSubmit={onSubmit} noValidate>
           <div style={{ marginBottom: 12 }}>
             <label htmlFor="username" style={{ display: 'block', fontWeight: 600, marginBottom: 6, color: theme.text }}>
@@ -127,7 +145,7 @@ export default function Login() {
             Continue
           </button>
         </form>
-        <div style={{ marginTop: 14, fontSize: 13, color: theme.textMuted }}>
+        <div style={{ marginTop: 14, fontSize: 13, color: theme.textMuted, textAlign: 'center' }}>
           Quick links: <Link to="/theme">Theme</Link> · <Link to="/select">Game modes</Link>
         </div>
       </main>
