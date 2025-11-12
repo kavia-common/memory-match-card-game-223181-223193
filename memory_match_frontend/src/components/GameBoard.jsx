@@ -23,7 +23,7 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
   // Card size is defined globally via CSS variables; only expose grid gap/padding variables here.
   const boardVars = useMemo(() => {
     return {
-      '--mm-card-size': 'var(--card-size)',
+      // Card sizing is global; do not override here.
       '--grid-gap': 'var(--grid-gap, 10px)',
       '--board-padding': 'var(--board-padding, 12px)',
     };

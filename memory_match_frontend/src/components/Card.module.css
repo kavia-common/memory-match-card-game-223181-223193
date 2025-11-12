@@ -1,14 +1,14 @@
 :root {
   /* PUBLIC_INTERFACE
      --mm-card-size mirrors :root --card-size for backward compatibility.
-     Inner card box is exactly 50px via --card-inner-size in index.css. */
+     Inner card box is exactly 60px via --card-inner-size in index.css. */
   --mm-card-size: var(--card-size);
   --mm-card-radius: 6px; /* reduced rounding to fit small size gracefully */
   --mm-card-radius-focus: 8px;
 
-  /* Font sizes tuned for 50px cards */
-  --mm-card-font-min: 11px;
-  --mm-card-font-max: 18px;
+  /* Font sizes tuned for 60px cards */
+  --mm-card-font-min: 12px;
+  --mm-card-font-max: 20px;
 }
 
 /* Outer clickable wrapper - must fit the inner box exactly */
@@ -72,14 +72,14 @@
   border-radius: var(--mm-card-radius-focus);
 }
 
-/* Both faces occupy the inner 50px exactly */
+/* Both faces occupy the inner 60px exactly */
 .cardFront,
 .cardBack {
   position: absolute;
   left: 0;
   top: 0;
-  width: var(--mm-card-size);   /* equals 50px */
-  height: var(--mm-card-size);  /* equals 50px */
+  width: var(--mm-card-size);   /* equals 60px */
+  height: var(--mm-card-size);  /* equals 60px */
   backface-visibility: hidden;
   border-radius: var(--mm-card-radius);
   border: 1px solid var(--card-border, #f1e4ee);
@@ -111,9 +111,9 @@
   /* border remains contained by border-box on faces; no outer border added */
 }
 
-/* Face content - clamp for readability at 50px */
+/* Face content - clamp for readability at 60px */
 .cardFace {
-  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.46), var(--mm-card-font-max));
+  font-size: clamp(var(--mm-card-font-min), calc(var(--mm-card-size) * 0.44), var(--mm-card-font-max));
   color: var(--card-text, #374151);
   user-select: none;
   line-height: 1;
@@ -127,7 +127,7 @@
 }
 
 .backAccent {
-  font-size: clamp(calc(var(--mm-card-font-min) - 1px), calc(var(--mm-card-size) * 0.36), calc(var(--mm-card-font-max) - 1px));
+  font-size: clamp(calc(var(--mm-card-font-min) - 1px), calc(var(--mm-card-size) * 0.34), calc(var(--mm-card-font-max) - 1px));
   color: rgba(244, 114, 182, 0.9);
 }
 
