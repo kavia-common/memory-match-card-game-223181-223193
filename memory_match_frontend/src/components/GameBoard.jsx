@@ -16,21 +16,29 @@ import theme from '../styles/theme';
 export default function GameBoard({ cols, rows, cards, onFlip, theme: passedTheme, difficulty }) {
   const t = passedTheme || theme;
 
-  // Grid sizing: smaller gaps for 6x6 to keep board compact; slightly larger for 4x4
+  // Grid gap tuning: smaller for dense grids (6x6), slightly larger for 4x4 for readability
   const gap = useMemo(() => {
-    if (cols >= 6 || rows >= 6) return 8;
-    return 10;
+    if (cols >= 6 || rows >= 6) return 6; // denser grid -> tighter gaps but still readable
+    return 12; // roomier on 4x4
   }, [cols, rows]);
 
-  // Use equal columns; card size itself is driven by CSS variable in Card.module.css
+  // Equal-width columns; card size is driven by CSS variables
   const gridTemplateColumns = useMemo(() => `repeat(${cols}, minmax(0, 1fr))`, [cols]);
 
-  // Board max width tuned so cards remain smaller while maintaining responsive growth
-  const maxWidth = useMemo(() => {
-    // heuristic: card size var ~ 84-96px max; include gaps
-    const approximateCard = 96; // aligns with --mm-card-size max on larger screens
-    return Math.min(1100, cols * approximateCard + (cols - 1) * gap + 24);
-  }, [cols, gap]);
+  // Override card size variable for 6x6 boards to use the smaller token
+  const cardSizeVar = useMemo(() => {
+    const isDense = cols >= 6 || rows >= 6;
+    // Expose both new and legacy variables for compatibility
+    return isDense
+      ? {
+          '--card-size': 'var(--card-size-sm)',
+          '--mm-card-size': 'var(--card-size-sm)',
+        }
+      : {
+          '--card-size': 'var(--card-size)',
+          '--mm-card-size': 'var(--card-size)',
+        };
+  }, [cols, rows]);
 
   return (
     <section
@@ -47,9 +55,7 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
         maxWidth: '100%',
         width: '100%',
         margin: '0 auto',
-        // Provide a comfortable container width target while remaining responsive
-        // This helps keep smaller cards consistent in size as the grid scales.
-        '--mm-card-size': 'var(--mm-card-size)',
+        ...cardSizeVar,
       }}
     >
       {cards.map((card) => (

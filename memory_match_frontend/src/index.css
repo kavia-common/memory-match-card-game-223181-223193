@@ -1,11 +1,28 @@
 :root {
-  /* Expose public variable for global tweaking if needed */
-  --mm-card-size: clamp(40px, 12vw, 84px);
+  /* PUBLIC_INTERFACE
+     --card-size is the primary control for card dimensions on standard grids (e.g., 4x4).
+     --card-size-sm is intended for denser grids (e.g., 6x6). Adjust these to tune the UI.
+     Both maintain a minimum touch target >= 40px. */
+  --card-size: clamp(40px, 10.5vw, 80px);
+  --card-size-sm: clamp(40px, 8.8vw, 64px);
+  /* Backward compatibility (Card.module.css references --mm-card-size) */
+  --mm-card-size: var(--card-size);
 }
 
 @media (min-width: 768px) {
   :root {
-    --mm-card-size: clamp(48px, 10.5vw, 96px);
+    --card-size: clamp(44px, 9.2vw, 88px);
+    --card-size-sm: clamp(40px, 7.2vw, 70px);
+    --mm-card-size: var(--card-size);
+  }
+}
+
+/* On very small screens, keep adequate tap size */
+@media (max-width: 360px) {
+  :root {
+    --card-size: 42px;
+    --card-size-sm: 40px;
+    --mm-card-size: var(--card-size);
   }
 }
 

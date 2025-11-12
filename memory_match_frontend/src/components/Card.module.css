@@ -1,26 +1,12 @@
 :root {
   /* PUBLIC_INTERFACE
-     --mm-card-size is the base size for cards; update this once to tweak all cards.
-     It is responsive, with a minimum touch target of 40px to satisfy accessibility. */
-  --mm-card-size: clamp(40px, 12vw, 84px);
+     --mm-card-size mirrors :root --card-size for backward compatibility.
+     Adjust --card-size or --card-size-sm in index.css to tune sizes app-wide. */
+  --mm-card-size: var(--card-size);
   --mm-card-radius: 12px;
   --mm-card-radius-focus: 14px;
-  --mm-card-font-min: 16px;
-  --mm-card-font-max: 28px;
-}
-
-/* On larger screens, slightly increase card size while keeping grid compact */
-@media (min-width: 768px) {
-  :root {
-    --mm-card-size: clamp(48px, 10.5vw, 96px);
-  }
-}
-
-/* On very small screens, ensure touch targets remain >= 40px */
-@media (max-width: 360px) {
-  :root {
-    --mm-card-size: 42px; /* keep adequate tap size */
-  }
+  --mm-card-font-min: 14px;
+  --mm-card-font-max: 24px;
 }
 
 .cardButton {
