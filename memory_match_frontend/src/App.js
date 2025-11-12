@@ -219,6 +219,7 @@ function App() {
           padding: '20px 20px 28px',
           border: `1px solid ${theme.surfaceBorder}`,
         }}
+        className="shadow-soft"
       >
         <StatusBar
           title="Ocean Memory Match"

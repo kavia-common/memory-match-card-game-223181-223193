@@ -16,21 +16,19 @@
   border: none;
   padding: 0;
   width: 100%;
-  /* Use fixed size driven by CSS variable but allow grid to shrink gracefully */
   aspect-ratio: 1 / 1;
   cursor: pointer;
   position: relative;
-  perspective: 800px;
+  perspective: 900px;
   border-radius: var(--mm-card-radius);
   outline: none;
-  /* Ensure the card doesn't become smaller than touch target */
   min-width: 40px;
   min-height: 40px;
+  /* Elevation on hover/press via transform on inner .card to keep layout stable */
 }
 
 .cardButton:focus-visible {
-  box-shadow: 0 0 0 3px rgba(244,114,182,0.6);
-  border-radius: var(--mm-card-radius-focus);
+  /* Focus ring handled on inner card to respect rounded corners */
 }
 
 .cardButton:disabled {
@@ -42,9 +40,31 @@
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 360ms ease;
+  transition: transform var(--dur-med) var(--easing-snap), box-shadow var(--dur-med) var(--easing-soft);
   border-radius: var(--mm-card-radius);
   box-shadow: 0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
+  will-change: transform;
+}
+
+/* Hover/active elevation micro-interactions (mouse/pen only) */
+@media (hover: hover) and (pointer: fine) {
+  .cardButton:hover .card:not(.flipped):not(.matched) {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 26px rgba(17, 24, 39, 0.12);
+  }
+  .cardButton:active .card:not(.flipped):not(.matched) {
+    transform: translateY(0) scale(0.995);
+    box-shadow: 0 8px 18px rgba(17, 24, 39, 0.10);
+  }
+}
+
+/* Custom focus-visible ring with offset and rounding */
+.cardButton:focus-visible .card {
+  box-shadow:
+    0 0 0 var(--focus-offset, 2px) #fff,
+    0 0 0 calc(var(--focus-width, 3px) + var(--focus-offset, 2px)) var(--focus-color, rgba(244,114,182,0.8)),
+    0 8px 20px var(--card-shadow, rgba(17, 24, 39, 0.1));
+  border-radius: var(--mm-card-radius-focus);
 }
 
 /* Both faces */
@@ -59,6 +79,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  will-change: transform, opacity;
 }
 
 .cardFront {
@@ -70,12 +91,12 @@
   background: var(--card-back, #fde2f1);
 }
 
+/* Flip states */
 .card.flipped {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(0);
 }
-
 .card.matched {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(0);
   box-shadow: 0 12px 24px rgba(16,185,129,0.18), 0 4px 8px rgba(16,185,129,0.12);
   border: 1px solid rgba(16,185,129,0.3);
 }
@@ -95,4 +116,29 @@
 .backAccent {
   font-size: clamp(calc(var(--mm-card-font-min) - 2px), calc(var(--mm-card-size) * 0.28), calc(var(--mm-card-font-max) - 2px));
   color: rgba(244, 114, 182, 0.9);
+}
+
+/* Entrance animation for cards (applied inline with delay via style prop) */
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cardEntrance {
+  animation: cardEntrance var(--dur-med) var(--easing-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+  .cardEntrance {
+    animation: none;
+  }
 }

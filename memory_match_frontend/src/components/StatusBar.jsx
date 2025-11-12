@@ -31,7 +31,7 @@ export default function StatusBar({
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',
         gap: 12,
-        marginBottom: 16,
+        marginBottom: 18,
       }}
     >
       <div style={{ textAlign: 'left' }}>
@@ -40,7 +40,7 @@ export default function StatusBar({
             margin: 0,
             fontSize: 22,
             color: theme.text,
-            fontWeight: 700,
+            fontWeight: 800,
             letterSpacing: 0.2,
           }}
           aria-label={`${title}${difficulty ? `, difficulty ${difficulty}` : ''}`}
@@ -49,7 +49,7 @@ export default function StatusBar({
         </h1>
         <p
           style={{
-            margin: 0,
+            margin: '2px 0 0 0',
             fontSize: 13,
             color: theme.textMuted,
           }}
@@ -59,15 +59,16 @@ export default function StatusBar({
       </div>
 
       <div
+        className="status-gradient"
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 14,
           justifyContent: 'center',
-          background: theme.headerPillBg,
           border: `1px solid ${theme.surfaceBorder}`,
-          borderRadius: 999,
+          borderRadius: 14,
           padding: '8px 14px',
+          boxShadow: '0 6px 16px rgba(0,0,0,0.04)',
         }}
         aria-label="Game status"
       >
@@ -75,7 +76,7 @@ export default function StatusBar({
           style={{
             fontVariantNumeric: 'tabular-nums',
             color: theme.text,
-            fontWeight: 600,
+            fontWeight: 700,
           }}
           aria-label={`Time elapsed ${time}`}
         >
@@ -90,7 +91,7 @@ export default function StatusBar({
           aria-hidden="true"
         />
         <span
-          style={{ color: theme.text, fontWeight: 600 }}
+          style={{ color: theme.text, fontWeight: 700 }}
           aria-label={`Moves ${moves}`}
         >
           🎯 {moves} moves
@@ -122,8 +123,16 @@ export default function StatusBar({
             borderRadius: 10,
             padding: '6px 10px',
             color: theme.text,
-            fontWeight: 600,
+            fontWeight: 700,
             cursor: canChange ? 'pointer' : 'default',
+            transition: 'box-shadow var(--dur-fast) var(--easing-soft)',
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.boxShadow =
+              '0 0 0 2px #fff, 0 0 0 5px rgba(244,114,182,0.6)';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           {difficulties.map((opt) => (
@@ -145,11 +154,10 @@ export default function StatusBar({
             border: 'none',
             padding: '10px 16px',
             borderRadius: 12,
-            fontWeight: 700,
+            fontWeight: 800,
             letterSpacing: 0.3,
             boxShadow: `0 6px 18px ${theme.primaryShadow}`,
             cursor: 'pointer',
-            transition: 'transform 120ms ease, box-shadow 200ms ease, opacity 120ms ease',
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {

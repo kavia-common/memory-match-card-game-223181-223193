@@ -18,7 +18,7 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
 
   // Grid gap tuning: smaller for dense grids (6x6), slightly larger for 4x4 for readability
   const gap = useMemo(() => {
-    if (cols >= 6 || rows >= 6) return 6; // denser grid -> tighter gaps but still readable
+    if (cols >= 6 || rows >= 6) return 8; // slightly increased for readability balance
     return 12; // roomier on 4x4
   }, [cols, rows]);
 
@@ -28,7 +28,6 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
   // Override card size variable for 6x6 boards to use the smaller token
   const cardSizeVar = useMemo(() => {
     const isDense = cols >= 6 || rows >= 6;
-    // Expose both new and legacy variables for compatibility
     return isDense
       ? {
           '--card-size': 'var(--card-size-sm)',
@@ -40,6 +39,10 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
         };
   }, [cols, rows]);
 
+  const prefersReducedMotion = typeof window !== 'undefined' &&
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   return (
     <section
       aria-label={`Game board ${cols} by ${rows}${difficulty ? `, difficulty ${difficulty}` : ''}`}
@@ -47,7 +50,7 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
         display: 'grid',
         gridTemplateColumns,
         gap,
-        padding: 10,
+        padding: 12,
         background: t.boardBg,
         borderRadius: 14,
         border: `1px solid ${t.surfaceBorder}`,
@@ -58,14 +61,23 @@ export default function GameBoard({ cols, rows, cards, onFlip, theme: passedThem
         ...cardSizeVar,
       }}
     >
-      {cards.map((card) => (
-        <Card
-          key={card.id}
-          card={card}
-          onFlip={() => onFlip(card.id)}
-          theme={t}
-        />
-      ))}
+      {cards.map((card, idx) => {
+        const delay = prefersReducedMotion ? '0ms' : `${Math.min(idx * 30, 240)}ms`;
+        const entranceClass = 'cardEntrance';
+        return (
+          <div
+            key={card.id}
+            style={{ animationDelay: delay }}
+            className={entranceClass}
+          >
+            <Card
+              card={card}
+              onFlip={() => onFlip(card.id)}
+              theme={t}
+            />
+          </div>
+        );
+      })}
     </section>
   );
 }
